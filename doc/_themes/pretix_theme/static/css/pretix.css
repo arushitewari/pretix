@@ -34,10 +34,6 @@ html {
     -ms-text-size-adjust: 100%
 }
 
-body {
-    margin: 0
-}
-
 a:hover, a:active {
     outline: 0
 }
@@ -4316,6 +4312,7 @@ html {
 
 body {
     font-family: "Open Sans", Helvetica, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
     font-weight: normal;
     color: #404040;
     min-height: 100%;
