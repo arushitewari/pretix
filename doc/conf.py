@@ -33,7 +33,7 @@ try:
     import enchant  # noqa
 
     HAS_PYENCHANT = True
-except:
+except ImportError:
     HAS_PYENCHANT = False
 
 # -- General configuration ------------------------------------------------
