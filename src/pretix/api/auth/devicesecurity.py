@@ -27,6 +27,8 @@ from django.utils.translation import gettext_lazy as _
 
 from pretix.api.signals import register_device_security_profile
 
+API_QUESTION_LIST = 'api-v1:question-list'
+
 logger = logging.getLogger(__name__)
 _ALL_PROFILES = None
 
@@ -92,7 +94,7 @@ class PretixScanSecurityProfile(AllowListSecurityProfile):
         ('GET', 'api-v1:subevent-detail'),
         ('GET', 'api-v1:itemcategory-list'),
         ('GET', 'api-v1:item-list'),
-        ('GET', 'api-v1:question-list'),
+        ('GET', API_QUESTION_LIST),
         ('GET', 'api-v1:badgelayout-list'),
         ('GET', 'api-v1:badgeitem-list'),
         ('GET', 'api-v1:checkinlist-list'),
@@ -130,7 +132,7 @@ class PretixScanNoSyncNoSearchSecurityProfile(AllowListSecurityProfile):
         ('GET', 'api-v1:subevent-detail'),
         ('GET', 'api-v1:itemcategory-list'),
         ('GET', 'api-v1:item-list'),
-        ('GET', 'api-v1:question-list'),
+        ('GET', API_QUESTION_LIST),
         ('GET', 'api-v1:badgelayout-list'),
         ('GET', 'api-v1:badgeitem-list'),
         ('GET', 'api-v1:checkinlist-list'),
@@ -165,7 +167,7 @@ class PretixScanNoSyncSecurityProfile(AllowListSecurityProfile):
         ('GET', 'api-v1:subevent-detail'),
         ('GET', 'api-v1:itemcategory-list'),
         ('GET', 'api-v1:item-list'),
-        ('GET', 'api-v1:question-list'),
+        ('GET', API_QUESTION_LIST),
         ('GET', 'api-v1:badgelayout-list'),
         ('GET', 'api-v1:badgeitem-list'),
         ('GET', 'api-v1:checkinlist-list'),
