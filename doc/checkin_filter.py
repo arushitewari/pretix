@@ -5,7 +5,7 @@ class CheckinFilter(Filter):
     the code, and is treated as being spelled right."""
 
     def _split(self, word):
-        if word[:8] == "checkin_":
+        word.startswith("checkin_")
             return unit_tokenize(word[8:])
 
         return unit_tokenize(word)
