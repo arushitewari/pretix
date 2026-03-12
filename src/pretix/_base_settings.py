@@ -27,6 +27,8 @@ from pycountry import currencies
 
 from django.utils.translation import gettext_lazy as _  # NOQA
 
+EXT_JPEG = ".jpeg"
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 USE_I18N = True
@@ -300,17 +302,17 @@ CACHE_LARGE_VALUES_ALIAS = 'default'
 
 # Allowed file extensions for various places plus matching Pillow formats.
 # Never allow EPS, it is full of dangerous bugs.
-FILE_UPLOAD_EXTENSIONS_IMAGE = (".png", ".jpg", ".gif", ".jpeg")
+FILE_UPLOAD_EXTENSIONS_IMAGE = (".png", ".jpg", ".gif", EXT_JPEG)
 PILLOW_FORMATS_IMAGE = ('PNG', 'GIF', 'JPEG')
 
-FILE_UPLOAD_EXTENSIONS_FAVICON = (".ico", ".png", ".jpg", ".gif", ".jpeg")
+FILE_UPLOAD_EXTENSIONS_FAVICON = (".ico", ".png", ".jpg", ".gif", EXT_JPEG)
 PILLOW_FORMATS_QUESTIONS_FAVICON = ('PNG', 'GIF', 'JPEG', 'ICO')
 
-FILE_UPLOAD_EXTENSIONS_QUESTION_IMAGE = (".png", ".jpg", ".gif", ".jpeg", ".bmp", ".tif", ".tiff", ".jfif")
+FILE_UPLOAD_EXTENSIONS_QUESTION_IMAGE = (".png", ".jpg", ".gif", EXT_JPEG, ".bmp", ".tif", ".tiff", ".jfif")
 PILLOW_FORMATS_QUESTIONS_IMAGE = ('PNG', 'GIF', 'JPEG', 'BMP', 'TIFF')
 
 FILE_UPLOAD_EXTENSIONS_EMAIL_ATTACHMENT = (
-    ".png", ".jpg", ".gif", ".jpeg", ".pdf", ".txt", ".docx", ".gif", ".svg",
+    ".png", ".jpg", ".gif", EXT_JPEG, ".pdf", ".txt", ".docx", ".gif", ".svg",
     ".pptx", ".ppt", ".doc", ".xlsx", ".xls", ".jfif", ".heic", ".heif", ".pages",
     ".bmp", ".tif", ".tiff", ".ics",
 )
