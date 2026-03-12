@@ -3623,11 +3623,6 @@ button[disabled] {
     margin-top: 6px
 }
 
-fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0
-}
 
 legend {
     display: block;
