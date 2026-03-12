@@ -843,7 +843,13 @@ class BaseQuestionsForm(forms.Form):
                     help_text=help_text,
                     widget=forms.Select,
                     empty_label=' ',
-                    initial=initial.answer if initial else (guess_country_from_request(request, event) if required else None),
+                    if initial:
+    initial_value = initial.answer
+elif required:
+    initial_value = guess_country_from_request(request, event)
+else:
+    initial_value = None
+initial = initial_value
                 )
             elif q.type == Question.TYPE_CHOICE:
                 field = forms.ModelChoiceField(
