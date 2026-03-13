@@ -101,7 +101,7 @@ class BaseAuthBackend:
         You are expected to either return a ``User`` object (if login was successful) or ``None``. You should
         obtain this user object using ``User.objects.get_or_create_for_backend``.
         """
-        return
+        
 
     def request_authenticate(self, request):
         """
@@ -114,7 +114,7 @@ class BaseAuthBackend:
         You are expected to either return a ``User`` object (if login was successful) or ``None``. You should
         obtain this user object using ``User.objects.get_or_create_for_backend``.
         """
-        return
+        
 
     def authentication_url(self, request):
         """
