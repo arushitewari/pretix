@@ -1,6 +1,12 @@
 FROM python:3.11-bookworm
 
 RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
             gettext \
@@ -21,8 +27,7 @@ RUN apt-get update && \
             libmaxminddb0 \
             libmaxminddb-dev \
             zlib1g-dev \
-            nodejs  \
-            npm && \
+            nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     dpkg-reconfigure locales &&  \
@@ -34,7 +39,6 @@ RUN apt-get update && \
     echo 'pretixuser ALL=(ALL) NOPASSWD:SETENV: /usr/bin/supervisord' >> /etc/sudoers && \
     mkdir /static && \
     mkdir /etc/supervisord
-
 
 ENV LC_ALL=C.UTF-8 \
     DJANGO_SETTINGS_MODULE=production_settings
