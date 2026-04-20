@@ -884,12 +884,12 @@ class OrderSerializer(I18nAwareModelSerializer):
 
         includes = set(self.context['include'])
         if includes:
-            for fname, field in list(self.fields.items()):
+            for fname, field in self.fields.items():
                 if fname in includes:
                     continue
                 elif hasattr(field, 'child'):  # Nested list serializers
                     found_any = False
-                    for childfname, childfield in list(field.child.fields.items()):
+                    for childfname, childfield in field.child.fields.items():
                         if f'{fname}.{childfname}' not in includes:
                             field.child.fields.pop(childfname)
                         else:
@@ -898,7 +898,7 @@ class OrderSerializer(I18nAwareModelSerializer):
                         self.fields.pop(fname)
                 elif isinstance(field, serializers.Serializer):  # Nested serializers
                     found_any = False
-                    for childfname, childfield in list(field.fields.items()):
+                    for childfname, childfield in field.fields.items():
                         if f'{fname}.{childfname}' not in includes:
                             field.fields.pop(childfname)
                         else:

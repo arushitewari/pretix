@@ -13,6 +13,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+PROJECT_TITLE = 'pretix Developer Documentation'
 import sys
 import os
 
@@ -32,7 +33,7 @@ try:
     import enchant  # noqa
 
     HAS_PYENCHANT = True
-except:
+except ImportError:
     HAS_PYENCHANT = False
 
 # -- General configuration ------------------------------------------------
@@ -233,7 +234,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index', 'pretix.tex', 'pretix Developer Documentation',
+    ('index', 'pretix.tex', PROJECT_TITLE,
      'rami.io GmbH', 'manual'),
 ]
 
@@ -263,7 +264,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pretix', 'pretix Developer Documentation',
+    ('index', 'pretix', PROJECT_TITLE,
      ['rami.io GmbH'], 1)
 ]
 

@@ -123,6 +123,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='oauthrefreshtoken',
-            unique_together=set([('token', 'revoked')]),
+            unique_together={('token', 'revoked')},
         ),
     ]
