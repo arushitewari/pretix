@@ -319,6 +319,64 @@ with scopes_disabled():
             )
 
 
+class CheckinContext:
+    """
+    Shared context object for the check-in pipeline.
+    Introduced as part of Chain of Responsibility refactoring (630:P3 #72).
+    Full handler migration is tracked in subsequent PRs.
+    """
+    def __init__(self, *, checkinlists, raw_barcode, answers_data, datetime,
+                 force, checkin_type, ignore_unpaid, nonce, untrusted_input,
+                 user, auth, expand, pdf_data, request, questions_supported,
+                 canceled_supported, source_type='barcode', legacy_url_support=False,
+                 simulate=False, gate=None, use_order_locale=False):
+        self.checkinlists = checkinlists
+        self.raw_barcode = raw_barcode
+        self.answers_data = answers_data
+        self.datetime = datetime
+        self.force = force
+        self.checkin_type = checkin_type
+        self.ignore_unpaid = ignore_unpaid
+        self.nonce = nonce
+        self.untrusted_input = untrusted_input
+        self.user = user
+        self.auth = auth
+        self.expand = expand
+        self.pdf_data = pdf_data
+        self.request = request
+        self.questions_supported = questions_supported
+        self.canceled_supported = canceled_supported
+        self.source_type = source_type
+        self.legacy_url_support = legacy_url_support
+        self.simulate = simulate
+        self.gate = gate
+        self.use_order_locale = use_order_locale
+        # Mutable pipeline state
+        self.op_candidates = []
+        self.op = None
+        self.common_checkin_args = {}
+        self.raw_barcode_for_checkin = None
+        self.from_revoked_secret = False
+        self.response = None
+
+
+class CheckinHandler:
+    """
+    Base class for Chain of Responsibility check-in handlers.
+    Introduced as part of 630:P3 #72 refactoring.
+    """
+    def __init__(self):
+        self._next = None
+
+    def set_next(self, handler):
+        self._next = handler
+        return handler
+
+    def handle(self, context: CheckinContext):
+        if self._next:
+            return self._next.handle(context)
+        return None
+
 def _handle_file_upload(data, user, auth):
     try:
         cf = CachedFile.objects.get(
