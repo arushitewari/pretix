@@ -1,12 +1,10 @@
 FROM python:3.11-bookworm
 
+# Phase 1: OS dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl ca-certificates && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
             gettext \
@@ -54,6 +52,7 @@ COPY pyproject.toml /pretix/pyproject.toml
 COPY _build /pretix/_build
 COPY src /pretix/src
 
+# Phase 2: Python setup
 RUN pip3 install -U \
         pip \
         setuptools \
@@ -64,6 +63,7 @@ RUN pip3 install -U \
         gunicorn django-extensions ipython && \
     rm -rf ~/.cache/pip
 
+# Phase 3: Runtime configuration
 RUN chmod +x /usr/local/bin/pretix && \
     rm /etc/nginx/sites-enabled/default && \
     cd /pretix/src && \
