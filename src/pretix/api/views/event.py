@@ -131,7 +131,22 @@ with scopes_disabled():
             )
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class AvailabilityComputeMixin:
+    def _compute_availability(self, page):
+        if 'with_availability_for' in self.request.GET:
+            quotas_to_compute = []
+            qcache = {}
+            for se in page:
+                se._quota_cache = qcache
+                quotas_to_compute += se.active_quotas
+
+            if quotas_to_compute:
+                qa = QuotaAvailability()
+                qa.queue(*quotas_to_compute)
+                qa.compute(allow_cache=True)
+                qcache.update(qa.results)
+
+class EventViewSet(AvailabilityComputeMixin, viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.none()
     lookup_field = 'slug'
@@ -190,22 +205,8 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
-
-        if 'with_availability_for' in self.request.GET:
-            quotas_to_compute = []
-            qcache = {}
-            for se in page:
-                se._quota_cache = qcache
-                quotas_to_compute += se.active_quotas
-
-            if quotas_to_compute:
-                qa = QuotaAvailability()
-                qa.queue(*quotas_to_compute)
-                qa.compute(allow_cache=True)
-                qcache.update(qa.results)
-
+        self._compute_availability(page)
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
@@ -423,7 +424,7 @@ with scopes_disabled():
             )
 
 
-class SubEventViewSet(ConditionalListView, viewsets.ModelViewSet):
+class SubEventViewSet(AvailabilityComputeMixin, ConditionalListView, viewsets.ModelViewSet):
     serializer_class = SubEventSerializer
     queryset = SubEvent.objects.none()
     write_permission = 'can_change_event_settings'
@@ -477,22 +478,8 @@ class SubEventViewSet(ConditionalListView, viewsets.ModelViewSet):
     def list(self, request, **kwargs):
         date = serializers.DateTimeField().to_representation(now())
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
-
-        if 'with_availability_for' in self.request.GET:
-            quotas_to_compute = []
-            qcache = {}
-            for se in page:
-                se._quota_cache = qcache
-                quotas_to_compute += se.active_quotas
-
-            if quotas_to_compute:
-                qa = QuotaAvailability()
-                qa.queue(*quotas_to_compute)
-                qa.compute(allow_cache=True)
-                qcache.update(qa.results)
-
+        self._compute_availability(page)
         serializer = self.get_serializer(page, many=True)
         resp = self.get_paginated_response(serializer.data)
         resp['X-Page-Generated'] = date
