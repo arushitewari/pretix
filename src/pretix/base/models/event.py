@@ -705,17 +705,25 @@ class Event(EventMixin, LoggedModel):
         This will be called after event creation, but only if the event was not created by copying an existing one.
         This way, we can use this to introduce new default settings to pretix that do not affect existing events.
         """
-        self.settings.invoice_renderer = 'modern1'
-        self.settings.invoice_include_expire_date = True
-        self.settings.invoice_renderer_highlight_order_code = True
-        self.settings.ticketoutput_pdf__enabled = True
-        self.settings.ticketoutput_passbook__enabled = True
-        self.settings.event_list_type = 'calendar'
-        self.settings.invoice_email_attachment = True
-        self.settings.name_scheme = 'given_family'
-        self.settings.payment_banktransfer_invoice_immediately = True
-        self.settings.low_availability_percentage = 10
-
+        def set_defaults(self):
+    """
+    This will be called after event creation, but only if the event was not created by copying an existing o
+    This way, we can use this to introduce new default settings to pretix that do not affect existing events
+    """
+    from pretix.base.models.event_defaults_strategies import (
+        InvoiceDefaultsStrategy,
+        TicketOutputDefaultsStrategy,
+        DisplayDefaultsStrategy,
+        PaymentDefaultsStrategy,
+    )
+    strategies = [
+        InvoiceDefaultsStrategy(),
+        TicketOutputDefaultsStrategy(),
+        DisplayDefaultsStrategy(),
+        PaymentDefaultsStrategy(),
+    ]
+    for strategy in strategies:
+        strategy.apply(self)
     @property
     def social_image(self):
         from pretix.multidomain.urlreverse import build_absolute_uri
