@@ -62,9 +62,9 @@ RUN pip3 install -U \
     PRETIX_DOCKER_BUILD=TRUE pip3 install \
         -e ".[memcached]" \
         gunicorn django-extensions ipython && \
-    rm -rf ~/.cache/pip
+    rm -rf ~/.cache/pip && \
 
-RUN chmod +x /usr/local/bin/pretix && \
+    chmod +x /usr/local/bin/pretix && \
     rm /etc/nginx/sites-enabled/default && \
     cd /pretix/src && \
     rm -f pretix.cfg &&  \
