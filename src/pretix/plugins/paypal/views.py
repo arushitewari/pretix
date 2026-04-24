@@ -61,6 +61,11 @@ from pretix.plugins.paypal.payment import Paypal
 logger = logging.getLogger('pretix.plugins.paypal')
 
 
+def _redirect_to_checkout(request, urlkwargs):
+    """Template Method: single point for all checkout redirects."""
+    return redirect_to_url(eventreverse(request.event, 'presale:event.checkout', kwargs=urlkwargs))
+
+
 @xframe_options_exempt
 def redirect_view(request, *args, **kwargs):
     signer = signing.Signer(salt='safe-redirect')
@@ -100,14 +105,14 @@ def success(request, *args, **kwargs):
             except PaymentException as e:
                 messages.error(request, str(e))
                 urlkwargs['step'] = 'payment'
-                return redirect_to_url(eventreverse(request.event, 'presale:event.checkout', kwargs=urlkwargs))
+                return _redirect_to_checkout(request, urlkwargs)
             if resp:
                 return resp
     else:
         messages.error(request, _('Invalid response from PayPal received.'))
         logger.error('Session did not contain payment_paypal_id')
         urlkwargs['step'] = 'payment'
-        return redirect_to_url(eventreverse(request.event, 'presale:event.checkout', kwargs=urlkwargs))
+        return _redirect_to_checkout(request, urlkwargs)
 
     if payment:
         return redirect_to_url(eventreverse(request.event, 'presale:event.order', kwargs={
@@ -116,7 +121,7 @@ def success(request, *args, **kwargs):
         }) + ('?paid=yes' if payment.order.status == Order.STATUS_PAID else ''))
     else:
         urlkwargs['step'] = 'confirm'
-        return redirect_to_url(eventreverse(request.event, 'presale:event.checkout', kwargs=urlkwargs))
+        return _redirect_to_checkout(request, urlkwargs)
 
 
 def abort(request, *args, **kwargs):
@@ -133,7 +138,8 @@ def abort(request, *args, **kwargs):
             'secret': payment.order.secret
         }) + ('?paid=yes' if payment.order.status == Order.STATUS_PAID else ''))
     else:
-        return redirect_to_url(eventreverse(request.event, 'presale:event.checkout', kwargs={'step': 'payment'}))
+        urlkwargs = {'step': 'payment'}
+        return _redirect_to_checkout(request, urlkwargs)
 
 
 @csrf_exempt
