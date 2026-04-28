@@ -44,49 +44,31 @@ from pretix.base.services.media import get_keysets_for_organizer
 
 logger = logging.getLogger(__name__)
 
+class BaseDeviceSerializer(serializers.Serializer):
+    hardware_brand = serializers.CharField(max_length=190)
+    hardware_model = serializers.CharField(max_length=190)
+    os_name = serializers.CharField(max_length=190, required=False, allow_null=True)
+    os_version = serializers.CharField(max_length=190, required=False, allow_null=True)
+    software_brand = serializers.CharField(max_length=190)
+    software_version = serializers.CharField(max_length=190)
+    info = serializers.JSONField(required=False, allow_null=True)
+    rsa_pubkey = serializers.CharField(required=False, allow_null=True)
 
-class InitializationRequestSerializer(serializers.Serializer):
+    def validate(self, attrs):
+        if attrs.get('rsa_pubkey'):
+            try:
+                load_pem_public_key(
+                    attrs['rsa_pubkey'].encode(), Backend()
+                )
+            except:
+                raise ValidationError({'rsa_pubkey': ['Not a valid public key.']})
+        return attrs
+
+class InitializationRequestSerializer(BaseDeviceSerializer):
     token = serializers.CharField(max_length=190)
-    hardware_brand = serializers.CharField(max_length=190)
-    hardware_model = serializers.CharField(max_length=190)
-    os_name = serializers.CharField(max_length=190, required=False, allow_null=True)
-    os_version = serializers.CharField(max_length=190, required=False, allow_null=True)
-    software_brand = serializers.CharField(max_length=190)
-    software_version = serializers.CharField(max_length=190)
-    info = serializers.JSONField(required=False, allow_null=True)
-    rsa_pubkey = serializers.CharField(required=False, allow_null=True)
 
-    def validate(self, attrs):
-        if attrs.get('rsa_pubkey'):
-            try:
-                load_pem_public_key(
-                    attrs['rsa_pubkey'].encode(), Backend()
-                )
-            except:
-                raise ValidationError({'rsa_pubkey': ['Not a valid public key.']})
-        return attrs
-
-
-class UpdateRequestSerializer(serializers.Serializer):
-    hardware_brand = serializers.CharField(max_length=190)
-    hardware_model = serializers.CharField(max_length=190)
-    os_name = serializers.CharField(max_length=190, required=False, allow_null=True)
-    os_version = serializers.CharField(max_length=190, required=False, allow_null=True)
-    software_brand = serializers.CharField(max_length=190)
-    software_version = serializers.CharField(max_length=190)
-    info = serializers.JSONField(required=False, allow_null=True)
-    rsa_pubkey = serializers.CharField(required=False, allow_null=True)
-
-    def validate(self, attrs):
-        if attrs.get('rsa_pubkey'):
-            try:
-                load_pem_public_key(
-                    attrs['rsa_pubkey'].encode(), Backend()
-                )
-            except:
-                raise ValidationError({'rsa_pubkey': ['Not a valid public key.']})
-        return attrs
-
+class UpdateRequestSerializer(BaseDeviceSerializer):
+    pass
 
 class RSAEncryptedField(serializers.Field):
     def to_representation(self, value):
