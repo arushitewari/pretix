@@ -12,15 +12,18 @@ class SettingsAdapter:
         object.__setattr__(self, '_real', real_settings)
 
     def set(self, *args, **kwargs):
+	# writes are intentionally ignored in this context
         pass
 
     def get(self, key, *args, **kwargs):
+   	# writes are intentionally ignored in this context
         return self._real.get(key, *args, **kwargs)
 
     def __getattr__(self, item):
         return getattr(self._real, item)
 
     def __setattr__(self, key, value):
+   	# writes are intentionally ignored in this context
         pass
 
 
@@ -39,11 +42,12 @@ class EventAdapter:
             return object.__getattribute__(self, 'settings')
         return getattr(object.__getattribute__(self, '_real'), item)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key, value):  
+	# writes are intentionally ignored in this context
         pass
 
 
-def build_event_adapter() -> EventAdapter:
+def build_event_adapter() -> "EventAdapter | None":
     """
     Returns an EventAdapter wrapping the first available event,
     or None if no events exist.
